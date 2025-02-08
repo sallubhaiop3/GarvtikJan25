@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Global Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-robot"></i>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-item">Home</a>
+                <a href="{{ url_for('view_history') }}" class="nav-item">History</a>
+                <button class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero animate-on-scroll">
+        <div class="hero-content">
+            <div class="animated-title">
+                <div class="title-wrapper">
+                    <span class="title-letter">A</span>
+                    <span class="title-letter">I</span>
+                    <span class="title-space"></span>
+                    <span class="title-letter">E</span>
+                    <span class="title-letter">m</span>
+                    <span class="title-letter">o</span>
+                    <span class="title-letter">t</span>
+                    <span class="title-letter">i</span>
+                    <span class="title-letter">o</span>
+                    <span class="title-letter">n</span>
+                    <span class="title-space"></span>
+                    <span class="title-letter">D</span>
+                    <span class="title-letter">e</span>
+                    <span class="title-letter">t</span>
+                    <span class="title-letter">e</span>
+                    <span class="title-letter">c</span>
+                    <span class="title-letter">t</span>
+                    <span class="title-letter">i</span>
+                    <span class="title-letter">o</span>
+                    <span class="title-letter">n</span>
+                </div>
+                <div class="gradient-overlay"></div>
+            </div>
+            <p class="hero-subtitle animate-on-scroll fade-up">Experience the future of emotion recognition.</p>
+        </div>
+    </section>
+
+    <!-- Parallax Collision Section -->
+    <section class="parallax-collision">
+        <div class="collision-top">
+            <div class="collision-content">
+                <h2>Intelligent</h2>
+                <p>Powered by advanced AI</p>
+            </div>
+        </div>
+        <div class="collision-bottom">
+            <div class="collision-content">
+                <h2>Recognition</h2>
+                <p>Real-time emotion detection</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Feature Cards -->
+        <section class="features">
+            <div class="feature-card chat-card animate-on-scroll fade-left stagger-animation">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Interactive Chat</h3>
+                <p>Engage in natural conversations with our AI assistant.</p>
+            </div>
+            <div class="feature-card emotion-card animate-on-scroll fade-right stagger-animation">
+                <div class="feature-icon">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <h3>Emotion Detection</h3>
+                <p>Advanced facial recognition for accurate emotion analysis.</p>
+            </div>
+        </section>
+
+        <!-- Chat Interface -->
+        <section class="chat-interface">
+            <div class="chat-container" id="chat-container">
+                <!-- Messages will appear here -->
+            </div>
+            
+            <!-- Camera Section -->
+            <div class="camera-section">
+                <div id="video-container" class="video-wrapper" style="display: none;">
+                    <video id="video" autoplay playsinline style="display: none;"></video>
+                    <div id="countdown"></div>
+                </div>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <button id="detect-emotion" class="action-button">
+                    <i class="fas fa-camera"></i>
+                    <span>Detect Emotion</span>
+                </button>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-container">
+                    <input type="text" id="user-input" placeholder="Message AI Assistant...">
+                    <button onclick="sendMessage()" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <button id="voice-button" class="voice-button">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- Stats Section -->
+        <section class="stats">
+            <div class="stat-item animate-on-scroll scale-on-scroll stagger-animation">
+                <h4>Emotions Detected</h4>
+                <p class="stat-number">1000+</p>
+            </div>
+            <div class="stat-item animate-on-scroll scale-on-scroll stagger-animation">
+                <h4>Accuracy Rate</h4>
+                <p class="stat-number">99.9%</p>
+            </div>
+            <div class="stat-item animate-on-scroll scale-on-scroll stagger-animation">
+                <h4>Response Time</h4>
+                <p class="stat-number"><1s</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Powered by Advanced AI Technology</p>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('scale-on-scroll')) {
+                        entry.target.classList.add('show');
+                    } else {
+                        entry.target.classList.add('fade-in');
+                    }
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with animation classes
+        document.querySelectorAll('.feature-card, .stat-item, .animate-on-scroll, .scale-on-scroll, .fade-up, .fade-down, .fade-left, .fade-right').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Enhanced message handling
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Clear input and show user message with animation
+            input.value = '';
+            addMessage(message, 'user');
+            
+            // Show enhanced typing animation
+            const typingAnimation = showTypingAnimation();
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    body: JSON.stringify({ message: message }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                typingAnimation.remove();
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                addMessage(data.response, 'bot', true);
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                typingAnimation.remove();
+                addMessage("I'm having trouble responding right now.", 'bot', true);
+            }
+        }
+
+        // Enhanced typing animation
+        function showTypingAnimation() {
+            const chatContainer = document.getElementById('chat-container');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing-animation';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            
+            requestAnimationFrame(() => {
+                chatContainer.appendChild(typingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+            
+            return typingDiv;
+        }
+
+        // Enhanced message addition with animations
+        function addMessage(message, sender, animate = true) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message${animate ? ' message-animate' : ''}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = message;
+            
+            messageDiv.appendChild(contentDiv);
+            
+            requestAnimationFrame(() => {
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                if (animate) {
+                    requestAnimationFrame(() => {
+                        messageDiv.classList.add('show');
+                    });
+                }
+            });
+        }
+
+        // Optimize input handling
+        const userInput = document.getElementById('user-input');
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Debounce function to prevent rapid-fire requests
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Debounced send message
+        const debouncedSend = debounce(() => {
+            const sendButton = document.querySelector('.input-container button');
+            if (sendButton) sendButton.click();
+        }, 300);
+
+        // Theme toggle with enhanced animation
+        document.querySelector('.theme-toggle').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            const body = document.body;
+            
+            // Add transition class
+            body.classList.add('theme-transition');
+            
+            // Toggle theme with animation
+            if (body.classList.contains('dark-theme')) {
+                icon.className = 'fas fa-sun';
+                body.classList.remove('dark-theme');
+            } else {
+                icon.className = 'fas fa-moon';
+                body.classList.add('dark-theme');
+            }
+            
+            // Remove transition class after animation
+            setTimeout(() => {
+                body.classList.remove('theme-transition');
+            }, 300);
+        });
+
+        // Check and initialize mediaDevices if needed
+        if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+        }
+
+        // Polyfill getUserMedia
+        if (navigator.mediaDevices.getUserMedia === undefined) {
+            navigator.mediaDevices.getUserMedia = function(constraints) {
+                const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+
+                return new Promise(function(resolve, reject) {
+                    getUserMedia.call(navigator, constraints, resolve, reject);
+                });
+            };
+        }
+
+        async function resetAndRequestCamera() {
+            try {
+                // Check if we're on HTTPS or localhost
+                if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                    const modal = document.createElement('div');
+                    modal.className = 'permission-modal';
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <h2><i class="fas fa-lock"></i> Camera Access Required</h2>
+                            <p>To use the camera feature, please:</p>
+                            <ol>
+                                <li>Access this site through localhost, or</li>
+                                <li>Use a secure HTTPS connection</li>
+                            </ol>
+                            <p>Currently running on: ${location.protocol}//${location.host}</p>
+                            <div class="button-group">
+                                <button id="try-localhost" class="button">
+                                    <i class="fas fa-home"></i> Use Localhost
+                                </button>
+                                <button id="continue-anyway" class="button">
+                                    <i class="fas fa-arrow-right"></i> Continue Anyway
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    // Handle localhost button
+                    document.getElementById('try-localhost').onclick = () => {
+                        const port = location.port || '5000';
+                        window.location.href = `http://localhost:${port}${location.pathname}`;
+                    };
+
+                    // Handle continue anyway button
+                    document.getElementById('continue-anyway').onclick = async () => {
+                        modal.remove();
+                        try {
+                            const stream = await navigator.mediaDevices.getUserMedia({ 
+                                video: {
+                                    facingMode: "user",
+                                    width: { ideal: 640 },
+                                    height: { ideal: 480 }
+                                }
+                            });
+                            if (stream) {
+                                stream.getTracks().forEach(track => track.stop());
+                                return true;
+                            }
+                        } catch (err) {
+                            console.error('Camera access error:', err);
+                            showCameraErrorModal();
+                        }
+                    };
+                    return false;
+                }
+
+                // Request camera access
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                });
+
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                }
+
+            } catch (error) {
+                console.error('Camera access error:', error);
+                showCameraErrorModal();
+                return false;
+            }
+        }
+
+        // Function to show camera error modal
+        function showCameraErrorModal() {
+            const modal = document.createElement('div');
+            modal.className = 'permission-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-camera"></i> Camera Access Error</h2>
+                    <p>Please check:</p>
+                    <ol>
+                        <li>Camera permissions in browser settings</li>
+                        <li>Camera is not being used by another app</li>
+                        <li>Camera is properly connected</li>
+                    </ol>
+                    <div class="button-group">
+                        <button onclick="window.location.reload()" class="button">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                        <button onclick="openCameraSettings()" class="button">
+                            <i class="fas fa-cog"></i> Camera Settings
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Function to open camera settings
+        function openCameraSettings() {
+            if (navigator.userAgent.indexOf("Chrome") != -1) {
+                window.open('chrome://settings/content/camera');
+            } else if (navigator.userAgent.indexOf("Firefox") != -1) {
+                window.open('about:preferences#privacy');
+            } else {
+                alert('Please check your browser settings to allow camera access.');
+            }
+        }
+
+        // Camera handling with browser compatibility checks
+        document.getElementById('detect-emotion').addEventListener('click', async () => {
+            const button = document.getElementById('detect-emotion');
+            const videoContainer = document.getElementById('video-container');
+            const video = document.getElementById('video');
+            const countdown = document.getElementById('countdown');
+            
+            button.disabled = true;
+            button.classList.add('processing');
+            
+            try {
+                // Check for browser compatibility
+                if (!navigator.mediaDevices) {
+                    // Fallback for older browsers
+                    navigator.mediaDevices = {};
+                }
+
+                // Polyfill getUserMedia
+                if (!navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia = function(constraints) {
+                        const getUserMedia = navigator.webkitGetUserMedia || 
+                                           navigator.mozGetUserMedia ||
+                                           navigator.msGetUserMedia;
+
+                        if (!getUserMedia) {
+                            return Promise.reject(new Error('getUserMedia is not supported in this browser'));
+                        }
+
+                        return new Promise((resolve, reject) => {
+                            getUserMedia.call(navigator, constraints, resolve, reject);
+                        });
+                    };
+                }
+
+                // Request camera with more flexible constraints
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280, min: 640 },
+                        height: { ideal: 720, min: 480 }
+                    },
+                    audio: false
+                });
+
+                if (!video) {
+                    throw new Error('Video element not found');
+                }
+
+                video.srcObject = stream;
+                videoContainer.style.display = 'block';
+                video.style.display = 'block';
+                video.style.transform = 'scaleX(-1)';
+
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play().then(resolve).catch(resolve);
+                    };
+                });
+
+                // Show video with animation
+                requestAnimationFrame(() => {
+                    video.classList.add('show');
+                });
+
+                // Countdown
+                for (let i = 3; i > 0; i--) {
+                    countdown.style.display = 'flex';
+                    countdown.textContent = i;
+                    countdown.classList.add('countdown-animate');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    countdown.classList.remove('countdown-animate');
+                }
+
+                // Capture photo
+                const canvas = document.getElementById('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+
+                // Flip canvas horizontally
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                // Add flash effect
+                const flash = document.createElement('div');
+                flash.className = 'camera-flash';
+                videoContainer.appendChild(flash);
+
+                // Process photo
+                const imageData = canvas.toDataURL('image/jpeg');
+                const response = await fetch('/detect-emotion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to process image');
+                }
+
+                const data = await response.json();
+                if (data.emotion) {
+                    addMessage(`I detect that you're feeling ${data.emotion}`, 'bot', true);
+                } else {
+                    addMessage("I couldn't detect an emotion clearly. Please try again with better lighting.", 'bot', true);
+                }
+
+            } catch (error) {
+                console.error('Camera error:', error);
+                let errorMessage = 'Camera access failed. ';
+                
+                if (!window.isSecureContext) {
+                    errorMessage += 'Please ensure you are using HTTPS. ';
+                }
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Camera permission was denied. Please allow camera access.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += 'No camera found on your device.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMessage += 'Camera is already in use by another application.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                addMessage(errorMessage, 'bot', true);
+            } finally {
+                if (video.srcObject) {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+                video.srcObject = null;
+                video.style.display = 'none';
+                videoContainer.style.display = 'none';
+                countdown.style.display = 'none';
+                
+                button.disabled = false;
+                button.classList.remove('processing');
+            }
+        });
+
+        // Add button click animation
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'scale(0.95)';
+            });
+            
+            button.addEventListener('mouseup', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add error animation
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'message error-message';
+            errorDiv.textContent = message;
+            document.getElementById('chat-container').appendChild(errorDiv);
+        }
+
+        // Add loading spinner
+        function showLoading() {
+            const spinner = document.createElement('div');
+            spinner.className = 'loading-spinner';
+            return spinner;
+        }
+
+        // Add cleanup function for page unload (just in case)
+        window.addEventListener('beforeunload', () => {
+            const video = document.getElementById('video');
+            if (video && video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add initial animation classes
+            document.querySelectorAll('.feature-card, .stat-item').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.2}s`;
+                el.classList.add('animate-in');
+            });
+            
+            // Initialize chat
+            addMessage("Hello! I'm your AI assistant. I can help you detect emotions and chat with you.", 'bot', true);
+        });
+
+        // Parallax collision effect
+        document.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxSection = document.querySelector('.parallax-collision');
+            
+            if (parallaxSection) {
+                const parallaxStart = parallaxSection.offsetTop - window.innerHeight;
+                const parallaxEnd = parallaxSection.offsetTop + parallaxSection.offsetHeight;
+                
+                if (scrolled >= parallaxStart && scrolled <= parallaxEnd) {
+                    const progress = (scrolled - parallaxStart) / (parallaxEnd - parallaxStart);
+                    const topElement = document.querySelector('.collision-top');
+                    const bottomElement = document.querySelector('.collision-bottom');
+                    
+                    if (topElement && bottomElement) {
+                        topElement.style.transform = `translateY(${progress * -50}vh)`;
+                        bottomElement.style.transform = `translateY(${progress * 50}vh)`;
+                        
+                        // Add scale effect
+                        const scale = 1 + progress * 0.1;
+                        topElement.style.scale = scale.toString();
+                        bottomElement.style.scale = scale.toString();
+                        
+                        // Add opacity effect
+                        const opacity = 1 - progress * 1.5;
+                        topElement.style.opacity = opacity > 0 ? opacity : 0;
+                        bottomElement.style.opacity = opacity > 0 ? opacity : 0;
+                    }
+                }
+            }
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const parallaxElements = document.querySelectorAll('.parallax-section');
+            parallaxElements.forEach(element => {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.3;
+                element.style.transform = `translateY(${rate}px)`;
+            });
+        });
+
+        // Camera initialization with better error handling
+        async function initializeCamera() {
+            try {
+                // Check if running on HTTPS
+                if (window.location.protocol !== 'https:') {
+                    throw new Error('Camera access requires HTTPS. Please use a secure connection.');
+                }
+
+                // Check for camera support
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Your browser does not support camera access');
+                }
+
+                // Request camera permission
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                // Stop the stream immediately (we just wanted permission)
+                stream.getTracks().forEach(track => track.stop());
+                
+                console.log('Camera permission granted');
+                return true;
+
+            } catch (error) {
+                console.error('Camera initialization error:', error);
+                if (error.name === 'NotAllowedError') {
+                    addMessage('Camera access was denied. Please allow camera access in your browser settings.', 'bot', true);
+                } else if (error.name === 'NotFoundError') {
+                    addMessage('No camera found on your device.', 'bot', true);
+                } else {
+                    addMessage(error.message, 'bot', true);
+                }
+                return false;
+            }
+        }
+
+        // Call this when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCamera().then(success => {
+                if (!success) {
+                    console.log('Camera initialization failed');
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sendButton = document.getElementById('send-button');
+            const voiceButton = document.getElementById('voice-button');
+            const userInput = document.getElementById('user-input');
+            const chatbox = document.getElementById('chat-container');
+
+            let recognition;
+            let isRecording = false;
+
+            // Initialize Speech Recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    userInput.value = transcript;
+                    sendMessage();
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech Recognition Error:', event.error);
+                    toggleVoiceButton(false);
+                    alert('Voice recognition error. Please try again.');
+                };
+
+                recognition.onend = () => {
+                    toggleVoiceButton(false);
+                };
+            } else {
+                voiceButton.style.display = 'none'; // Hide voice button if unsupported
+                console.warn("Your browser does not support Speech Recognition.");
+            }
+
+            // Send Button Click Event
+            sendButton.addEventListener('click', () => {
+                sendMessage();
+            });
+
+            // Voice Button Click Event
+            voiceButton.addEventListener('click', () => {
+                if (isRecording) {
+                    recognition.stop();
+                    toggleVoiceButton(false);
+                } else {
+                    recognition.start();
+                    toggleVoiceButton(true);
+                }
+            });
+
+            // Function to toggle voice button state
+            function toggleVoiceButton(state) {
+                isRecording = state;
+                if (state) {
+                    voiceButton.classList.add('active');
+                } else {
+                    voiceButton.classList.remove('active');
+                }
+            }
+
+            // Function to send message
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (!message) return;
+
+                addMessage(message, 'user');
+                userInput.value = '';
+
+                try {
+                    const response = await fetch('/chatbot', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        addMessage(data.reply, 'bot');
+                        speak(data.reply);
+                    } else {
+                        addMessage(data.error || "I'm having trouble responding right now.", 'bot');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage("I'm having trouble responding right now.", 'bot');
+                }
+            }
+
+            // Function to add message to chatbox
+            function addMessage(message, sender) {
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', sender);
+                msgDiv.textContent = message;
+                chatbox.appendChild(msgDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+
+            // Function for Text-to-Speech
+            function speak(message) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(message);
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    console.warn("Your browser does not support Speech Synthesis.");
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
